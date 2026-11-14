@@ -2,7 +2,7 @@
   "expo": {
     "name": "Who Dat Imposter",
     "slug": "who-dat-imposter",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "whodatimposter",
@@ -14,7 +14,7 @@
     },
     "android": {
       "package": "com.whodatimposter.app",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#C6F432",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
