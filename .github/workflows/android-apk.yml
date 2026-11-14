@@ -50,7 +50,8 @@ jobs:
       - name: Build the APK
         working-directory: android
         run: |
-          echo "org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g" >> gradle.properties
+          # gradle.properties from prebuild has no trailing newline, so start on a fresh line.
+          printf '\norg.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g\n' >> gradle.properties
           # Real phones only (no emulator ABIs): faster build, smaller APK.
           ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
 
