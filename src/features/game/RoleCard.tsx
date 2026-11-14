@@ -9,9 +9,11 @@ import { imposterHint, isImposter } from '@/game/engine';
 import type { Round } from '@/game/types';
 import { colors, radius, space } from '@/theme';
 
-export function roleColor(round: Round, playerId: string): string {
-  return isImposter(round, playerId) ? colors.coral : colors.lime;
-}
+/**
+ * Every revealed card is the same color. A role-specific color would light up the
+ * player's face and give the imposter away to everyone watching.
+ */
+export const ROLE_CARD_COLOR = colors.card;
 
 type RoleFaceProps = {
   round: Round;
@@ -19,65 +21,60 @@ type RoleFaceProps = {
   compact?: boolean;
 };
 
-/** What a player sees once they flip their card: the word, or the bad news. */
+/**
+ * What a player sees once they flip their card: the word, or the bad news. Both roles
+ * use the identical layout (mascot, headline, info box, footnote) so the card looks the
+ * same from across the table.
+ */
 export function RoleFace({ round, playerId, compact }: RoleFaceProps) {
   const { width } = useWindowDimensions();
   // Small phones (and the compact dialog) get one size smaller headlines.
   const small = compact || width < 380;
+  const imposter = isImposter(round, playerId);
+  const hint = imposter ? imposterHint(round) : null;
 
-  if (isImposter(round, playerId)) {
-    const hint = imposterHint(round);
-    return (
-      <View style={styles.faceInner}>
-        <Mascot size={compact ? 60 : 88} mood="sneaky" />
-        <Txt variant="label">Shhh… you&apos;re the</Txt>
-        <Txt
-          variant={small ? 'display' : 'mega'}
-          align="center"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.5}>
-          IMPOSTER
-        </Txt>
-        {hint ? (
-          <View style={styles.hintBox}>
-            <Txt variant="label" color={colors.inkSoft}>
-              {hint.label}
-            </Txt>
-            <Txt variant="h2" align="center">
-              {hint.text}
-            </Txt>
-          </View>
-        ) : (
-          <Txt variant="bodyStrong" align="center">
-            No hint this time. Bluff like a pro!
-          </Txt>
-        )}
-        <Txt variant="small" align="center">
-          Blend in, listen closely and work out the word.
-        </Txt>
-      </View>
-    );
-  }
+  const face = imposter
+    ? {
+        label: 'Shhh… you’re the',
+        headline: 'IMPOSTER',
+        variant: small ? ('display' as const) : ('mega' as const),
+        lines: 1,
+        boxLabel: hint?.label ?? 'Hint',
+        boxText: hint?.text ?? 'None this time. Bluff!',
+        footnote: 'Blend in, listen closely and work out the word.',
+      }
+    : {
+        label: 'The secret word is',
+        headline: round.word,
+        variant: fitVariant(round.word, small ? ['display', 'h1', 'h2'] : ['mega', 'display', 'h1']),
+        lines: 3,
+        boxLabel: 'Category',
+        boxText: `${round.categoryEmoji} ${round.categoryName}`,
+        footnote: 'Give a clue that proves you know it, without handing it to the imposter.',
+      };
 
   return (
     <View style={styles.faceInner}>
-      <Txt variant="label">The secret word is</Txt>
+      <Mascot size={compact ? 60 : 88} mood="sneaky" />
+      <Txt variant="label">{face.label}</Txt>
       <Txt
-        variant={fitVariant(round.word, small ? ['display', 'h1', 'h2'] : ['mega', 'display', 'h1'])}
+        variant={face.variant}
         align="center"
-        numberOfLines={3}
+        numberOfLines={face.lines}
         adjustsFontSizeToFit
         minimumFontScale={0.5}>
-        {round.word}
+        {face.headline}
       </Txt>
-      <View style={styles.categoryChip}>
-        <Txt variant="smallStrong">
-          {round.categoryEmoji} {round.categoryName}
+      <View style={styles.infoBox}>
+        <Txt variant="label" color={colors.inkSoft}>
+          {face.boxLabel}
+        </Txt>
+        <Txt variant="h2" align="center">
+          {face.boxText}
         </Txt>
       </View>
       <Txt variant="small" align="center">
-        Give a clue that proves you know it, without handing it to the imposter.
+        {face.footnote}
       </Txt>
     </View>
   );
@@ -168,7 +165,7 @@ export function RoleCard({ round, playerId, revealed, onReveal }: RoleCardProps)
           <Animated.View style={[StyleSheet.absoluteFill, backStyle]}>
             {revealed ? (
               <Pop
-                color={roleColor(round, playerId)}
+                color={ROLE_CARD_COLOR}
                 radius={radius.xl}
                 lift={7}
                 style={styles.fill}
@@ -202,24 +199,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: space.sm + 2,
   },
-  hintBox: {
+  infoBox: {
     alignSelf: 'stretch',
     alignItems: 'center',
     gap: 2,
-    backgroundColor: colors.card,
+    backgroundColor: colors.bg,
     borderWidth: 3,
     borderColor: colors.ink,
     borderRadius: radius.md,
     paddingVertical: space.md,
     paddingHorizontal: space.lg,
-  },
-  categoryChip: {
-    borderWidth: 2.5,
-    borderColor: colors.ink,
-    borderRadius: radius.pill,
-    backgroundColor: colors.card,
-    paddingHorizontal: space.md,
-    paddingVertical: 4,
   },
   pattern: {
     position: 'absolute',

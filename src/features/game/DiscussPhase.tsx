@@ -13,7 +13,7 @@ import { haptic } from '@/lib/haptics';
 import { useGame } from '@/store';
 import { colors, radius, space } from '@/theme';
 
-import { RoleFace, roleColor } from './RoleCard';
+import { ROLE_CARD_COLOR, RoleFace } from './RoleCard';
 import type { PhaseProps } from './types';
 import { formatClock, useCountdown } from './useCountdown';
 
@@ -164,6 +164,7 @@ function PeekDialog({ visible, round, onClose }: { visible: boolean; round: Roun
               lift={3}
               radius={radius.md}
               onPress={() => setWho(player.id)}
+              accessibilityLabel={player.name}
               contentStyle={styles.peekRow}>
               <Avatar id={player.id} name={player.name} size={32} />
               <Txt variant="bodyStrong">{player.name}</Txt>
@@ -198,7 +199,7 @@ function PeekDialog({ visible, round, onClose }: { visible: boolean; round: Roun
   } else {
     body = (
       <>
-        <Pop color={roleColor(round, who)} radius={radius.lg} contentStyle={styles.peekCard}>
+        <Pop color={ROLE_CARD_COLOR} radius={radius.lg} contentStyle={styles.peekCard}>
           <RoleFace round={round} playerId={who} compact />
         </Pop>
         <Button variant="dark" icon="eye-off" label="Hide it" onPress={close} />

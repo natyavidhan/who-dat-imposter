@@ -5,7 +5,6 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { fitVariant, Txt } from '@/components/Txt';
-import { isImposter } from '@/game/engine';
 import { haptic } from '@/lib/haptics';
 import { useGame } from '@/store';
 import { colors, space } from '@/theme';
@@ -22,8 +21,8 @@ export function RevealPhase({ round, topBar }: PhaseProps) {
   const reveal = () => {
     if (revealed) return;
     setRevealed(true);
-    if (isImposter(round, player.id)) haptic.warning();
-    else haptic.tap();
+    // Same buzz for every role: a different vibration could be heard around the table.
+    haptic.tap();
   };
 
   const pass = () => {
