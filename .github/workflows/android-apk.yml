@@ -1,0 +1,90 @@
+name: Android APK
+
+# Push a tag like v1.0.1 to build a sideloadable APK and attach it to a GitHub release.
+# Running it by hand (Actions tab -> Run workflow) builds the APK as a downloadable artifact.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CI: 1
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test and typecheck
+        run: |
+          npm test -- --ci
+          npm run typecheck
+
+      - name: Generate the native Android project
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build the APK
+        working-directory: android
+        run: |
+          echo "org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g" >> gradle.properties
+          # Real phones only (no emulator ABIs): faster build, smaller APK.
+          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      - name: Name the APK
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then VERSION="$GITHUB_REF_NAME"; else VERSION="$(git rev-parse --short HEAD)"; fi
+          APK="who-dat-imposter-${VERSION}.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "$APK"
+          echo "APK=$APK" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: who-dat-imposter-apk
+          path: ${{ env.APK }}
+          if-no-files-found: error
+
+      - name: Attach to the GitHub release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > release-notes.md <<'EOF'
+          ## Install on Android
+
+          1. Download the `.apk` below on your phone.
+          2. Open it and allow installing apps from your browser or files app when Android asks.
+          3. Tap **Install**.
+
+          This APK is signed with a development key for sideloading. It is not a Play Store build.
+          EOF
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$APK" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$APK" \
+              --title "Who Dat Imposter $GITHUB_REF_NAME" \
+              --notes-file release-notes.md
+          fi
