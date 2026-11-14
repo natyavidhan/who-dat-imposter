@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { Button, IconButton } from '@/components/Button';
@@ -37,6 +37,14 @@ const TIMER_OPTIONS = [
 ];
 
 const MAX_AVATARS = 7;
+const AUTHOR_URL = 'https://natya.dev';
+const REPO_URL = 'https://github.com/natyavidhan/who-dat-imposter';
+
+const openLink = (url: string) => {
+  Linking.openURL(url).catch(() => {
+    // No browser available; nothing else to do.
+  });
+};
 
 export default function LobbyScreen() {
   const router = useRouter();
@@ -258,9 +266,31 @@ export default function LobbyScreen() {
           />
         </Pop>
 
-        <Txt variant="small" align="center" color={colors.muted}>
-          Every category and mode is free.
-        </Txt>
+        <View style={styles.credits}>
+          <Txt variant="small" align="center" color={colors.muted}>
+            Every category and mode is free.
+          </Txt>
+          <Txt variant="small" align="center" color={colors.muted}>
+            Made with <Txt variant="small" color={colors.coral}>❤</Txt> by{' '}
+            <Txt
+              variant="smallStrong"
+              color={colors.inkSoft}
+              style={styles.link}
+              accessibilityRole="link"
+              onPress={() => openLink(AUTHOR_URL)}>
+              natya.dev
+            </Txt>
+          </Txt>
+          <Txt
+            variant="small"
+            align="center"
+            color={colors.inkSoft}
+            style={styles.link}
+            accessibilityRole="link"
+            onPress={() => openLink(REPO_URL)}>
+            github.com/natyavidhan/who-dat-imposter
+          </Txt>
+        </View>
       </View>
     </Screen>
   );
@@ -345,5 +375,12 @@ const styles = StyleSheet.create({
   },
   rulesLabel: {
     marginBottom: space.xs,
+  },
+  credits: {
+    gap: 2,
+    paddingBottom: space.sm,
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
 });
