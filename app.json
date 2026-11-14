@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Who Dat Imposter",
+    "slug": "who-dat-imposter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "whodatimposter",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFF3DF",
+    "ios": {
+      "bundleIdentifier": "com.whodatimposter.app",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.whodatimposter.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#C6F432",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "backgroundColor": "#FFF3DF"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-system-ui",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFF3DF",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 180
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

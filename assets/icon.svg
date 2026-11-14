@@ -1,4 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#2563eb"/>
-  <text x="32" y="32" dy="0.35em" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="26" font-weight="600" fill="#ffffff">WD</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><clipPath id="r"><rect width="1024" height="1024" rx="224"/></clipPath><g clip-path="url(#r)"><rect width="1024" height="1024" fill="#C6F432"/><g transform="translate(71.68,71.68) scale(0.86)"><g transform="translate(-30,-14)">
+  <path d="M212,550 A300,300 0 0 1 812,550 L812,730 Q812,850 692,850 L332,850 Q212,850 212,730 Z" fill="#17131F"/>
+  <rect x="290" y="412" width="444" height="264" rx="132" fill="#3A3150"/>
+  <clipPath id="e0"><ellipse cx="422" cy="544" rx="60" ry="51"/></clipPath>
+  <g clip-path="url(#e0)">
+    <ellipse cx="422" cy="544" rx="60" ry="51" fill="#FFFFFF"/>
+    <circle cx="396" cy="555" r="27" fill="#17131F"/>
+    <rect x="352" y="484" width="140" height="52" fill="#3A3150" transform="rotate(8 422 510)"/>
+  </g><clipPath id="e1"><ellipse cx="602" cy="544" rx="60" ry="51"/></clipPath>
+  <g clip-path="url(#e1)">
+    <ellipse cx="602" cy="544" rx="60" ry="51" fill="#FFFFFF"/>
+    <circle cx="576" cy="555" r="27" fill="#17131F"/>
+    <rect x="532" y="484" width="140" height="52" fill="#3A3150" transform="rotate(-8 602 510)"/>
+  </g>
+  <g transform="rotate(12 764 310)">
+    <circle cx="764" cy="310" r="99" fill="#FF5D4A" stroke="#17131F" stroke-width="18"/>
+    <text x="764" y="368" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-weight="900" font-size="170" fill="#17131F">?</text>
+  </g>
+</g></g></g></svg>
